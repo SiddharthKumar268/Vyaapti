@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RTGS Risk-Chain Analyzer</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="shortcut icon" href="../assets/bank.png" type="image/x-icon">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        #introVideo {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 9999;
+            background: #000;
+        }
+
+        #skipBtn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 10000;
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            backdrop-filter: blur(10px);
+        }
+
+        #skipBtn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        #mainContent {
+            display: none;
+        }
+
+        #mainContent.show {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Intro Video -->
+    <video id="introVideo" autoplay muted playsinline>
+        <source src="/assets/start.mp4" type="video/mp4">
+    </video>
+    <button id="skipBtn">Skip Intro →</button>
+
+    <!-- Main Content -->
+    <div id="mainContent">
+        <!-- Animated Background -->
+        <div class="bg-animation">
+            <div class="gradient-orb orb-1"></div>
+            <div class="gradient-orb orb-2"></div>
+            <div class="gradient-orb orb-3"></div>
+        </div>
+
+        <!-- Glassmorphic Navbar -->
+        <nav class="navbar">
+            <div class="nav-content">
+                <div class="nav-brand">
+                    <svg class="logo-icon" viewBox="0 0 24 24" fill="none">
+                        <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                        <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                    </svg>
+                    <span>Vyaapti-RTGS Risk Intelligence</span>
+                </div>
+                <ul class="nav-links">
+                    <li><a href="index.html" class="active">Dashboard</a></li>
+                    <li><a href="chains.html">Risk Chains</a></li>
+                    <li><a href="account.html">Accounts</a></li>
+                    <li><a href="graph.html">Network</a></li>
+                    <li><a href="insights.html">ML Insights</a></li> <!-- NEW -->
+                    <li><a href="https://siddharthkumar.tech">Developer</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <div class="container">
+            <!-- Hero Section -->
+            <div class="hero-section">
+                <h1 class="hero-title">
+                    <span class="gradient-text">Real-Time</span> Risk Intelligence
+                </h1>
+                <p class="hero-subtitle">Advanced transaction chain analysis powered by AI & Graph Analytics</p>
+            </div>
+
+            <!-- Stats Grid with Animated Cards -->
+            <div class="stats-grid">
+                <div class="stat-card" data-animate>
+                    <div class="stat-icon-wrapper">
+                        <svg class="stat-icon" viewBox="0 0 24 24" fill="none">
+                            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" stroke="currentColor"
+                                stroke-width="2" />
+                            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" stroke="currentColor"
+                                stroke-width="2" />
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <h3 class="stat-number" id="totalChains">0</h3>
+                        <p class="stat-label">Total Chains Detected</p>
+                        <div class="stat-change positive">↑ 12% from last week</div>
+                    </div>
+                </div>
+
+                <div class="stat-card warning" data-animate>
+                    <div class="stat-icon-wrapper">
+                        <svg class="stat-icon" viewBox="0 0 24 24" fill="none">
+                            <path
+                                d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"
+                                stroke="currentColor" stroke-width="2" />
+                            <line x1="12" y1="9" x2="12" y2="13" stroke="currentColor" stroke-width="2" />
+                            <line x1="12" y1="17" x2="12.01" y2="17" stroke="currentColor" stroke-width="2" />
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <h3 class="stat-number" id="highRiskChains">0</h3>
+                        <p class="stat-label">High Risk Chains</p>
+                        <div class="stat-change negative">↑ 8% critical alerts</div>
+                    </div>
+                </div>
+
+                <div class="stat-card success" data-animate>
+                    <div class="stat-icon-wrapper">
+                        <svg class="stat-icon" viewBox="0 0 24 24" fill="none">
+                            <line x1="12" y1="1" x2="12" y2="23" stroke="currentColor" stroke-width="2" />
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" stroke="currentColor"
+                                stroke-width="2" />
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <h3 class="stat-number" id="totalValue">0</h3>
+                        <p class="stat-label">Total Value (₹Cr)</p>
+                        <div class="stat-change neutral">Flagged transactions</div>
+                    </div>
+                </div>
+
+                <div class="stat-card danger" data-animate>
+                    <div class="stat-icon-wrapper">
+                        <svg class="stat-icon" viewBox="0 0 24 24" fill="none">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor"
+                                stroke-width="2" />
+                            <circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2" />
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87" stroke="currentColor" stroke-width="2" />
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75" stroke="currentColor" stroke-width="2" />
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <h3 class="stat-number" id="suspiciousAccounts">0</h3>
+                        <p class="stat-label">Suspicious Accounts</p>
+                        <div class="stat-change negative">Under investigation</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="charts-grid">
+                <div class="chart-card" data-animate>
+                    <div class="chart-header">
+                        <h2>Risk Score Distribution</h2>
+                        <div class="chart-controls">
+                            <button class="chart-btn active">7D</button>
+                            <button class="chart-btn">30D</button>
+                            <button class="chart-btn">90D</button>
+                        </div>
+                    </div>
+                    <canvas id="riskChart"></canvas>
+                </div>
+
+                <div class="chart-card" data-animate>
+                    <div class="chart-header">
+                        <h2>Transaction Volume Trends</h2>
+                        <div class="chart-controls">
+                            <button class="chart-btn active">7D</button>
+                            <button class="chart-btn">30D</button>
+                            <button class="chart-btn">90D</button>
+                        </div>
+                    </div>
+                    <canvas id="volumeChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Live Activity Feed -->
+            <div class="activity-section" data-animate>
+                <div class="section-header">
+                    <h2>Live Activity Feed</h2>
+                    <span class="live-indicator">
+                        <span class="pulse"></span>
+                        LIVE
+                    </span>
+                </div>
+                <div class="activity-feed" id="activityFeed">
+                    <div class="activity-item">
+                        <div class="activity-icon high">⚠️</div>
+                        <div class="activity-content">
+                            <p class="activity-title">High-risk chain detected</p>
+                            <p class="activity-meta">Chain ID: CH-8823 • 2 minutes ago</p>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon medium">🔍</div>
+                        <div class="activity-content">
+                            <p class="activity-title">Clustering analysis completed</p>
+                            <p class="activity-meta">342 accounts processed • 5 minutes ago</p>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon low">✓</div>
+                        <div class="activity-content">
+                            <p class="activity-title">Risk scoring updated</p>
+                            <p class="activity-meta">Database sync completed • 8 minutes ago</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top Risky Accounts -->
+            <div class="table-section" data-animate>
+                <div class="section-header">
+                    <h2>Top Risky Accounts</h2>
+                    <a href="account.html" class="view-all">View All →</a>
+                </div>
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Account ID</th>
+                                <th>Cluster</th>
+                                <th>Risk Score</th>
+                                <th>Chains</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="topAccountsBody">
+                            <tr class="loading-row">
+                                <td colspan="6">
+                                    <div class="loader"></div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="actions-grid" data-animate>
+                <a href="chains.html" class="action-card primary">
+                    <div class="action-icon">🔗</div>
+                    <h3>View Risk Chains</h3>
+                    <p>Explore detected transaction chains</p>
+                    <span class="action-arrow">→</span>
+                </a>
+
+                <a href="graph.html" class="action-card secondary">
+                    <div class="action-icon">🕸️</div>
+                    <h3>Network Graph</h3>
+                    <p>Visualize transaction networks</p>
+                    <span class="action-arrow">→</span>
+                </a>
+
+                <a href="account.html" class="action-card tertiary">
+                    <div class="action-icon">🔍</div>
+                    <h3>Search Accounts</h3>
+                    <p>Deep dive into account analytics</p>
+                    <span class="action-arrow">→</span>
+                </a>
+            </div>
+
+            <!-- Developer Credit -->
+            <div class="developer-credit" data-animate>
+                <p>Developed by</p>
+                <a href="https://siddharthkumar.tech" target="_blank" rel="noopener noreferrer" class="developer-link">
+                    <span class="developer-name">Siddharth Kumar</span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                        <polyline points="15 3 21 3 21 9"></polyline>
+                        <line x1="10" y1="14" x2="21" y2="3"></line>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const video = document.getElementById('introVideo');
+        const mainContent = document.getElementById('mainContent');
+        const skipBtn = document.getElementById('skipBtn');
+
+        function showMainContent() {
+            video.style.display = 'none';
+            skipBtn.style.display = 'none';
+            mainContent.classList.add('show');
+        }
+
+        // Skip button click
+        skipBtn.addEventListener('click', showMainContent);
+
+        // Try to play the video
+        video.play().then(function () {
+            console.log('Video playing');
+        }).catch(function (error) {
+            console.log('Autoplay prevented:', error);
+            // Show a message or skip directly
+            showMainContent();
+        });
+
+        video.addEventListener('ended', showMainContent);
+
+        video.addEventListener('error', function (e) {
+            console.log('Video error:', e);
+            showMainContent();
+        });
+
+        // Fallback timeout
+        setTimeout(function () {
+            if (video.style.display !== 'none') {
+                showMainContent();
+            }
+        }, 8500);
+    </script>
+    <script src="scripts/main.js"></script>
+</body>
+
+</html>

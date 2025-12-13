@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ML Insights - RTGS Analyzer</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="bg-animation">
+        <div class="gradient-orb orb-1"></div>
+        <div class="gradient-orb orb-2"></div>
+        <div class="gradient-orb orb-3"></div>
+    </div>
+
+    <nav class="navbar">
+        <div class="nav-content">
+            <div class="nav-brand">
+                <svg class="logo-icon" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2"/>
+                    <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2"/>
+                    <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2"/>
+                </svg>
+                <span>RTGS Risk Intelligence</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Dashboard</a></li>
+                <li><a href="chains.html">Risk Chains</a></li>
+                <li><a href="account.html">Accounts</a></li>
+                <li><a href="graph.html">Network</a></li>
+                <li><a href="ml-insights.html" class="active">ML Insights</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header" data-animate>
+            <div>
+                <h1 class="page-title">
+                    <span class="gradient-text">Machine Learning</span> Insights
+                </h1>
+                <p class="page-subtitle">AI-powered risk analysis and clustering</p>
+            </div>
+            <div class="header-actions">
+                <button class="btn-secondary" onclick="refreshData()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                        <path d="M21 12a9 9 0 11-9-9c2.52 0 4.93 1 6.74 2.74L21 8" stroke="currentColor" stroke-width="2"/>
+                        <path d="M21 3v5h-5" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                    Refresh
+                </button>
+            </div>
+        </div>
+
+        <!-- Model Status Cards -->
+        <div class="ml-status-grid" data-animate>
+            <div class="ml-status-card" id="kmeansStatus">
+                <div class="status-icon">🤖</div>
+                <div class="status-content">
+                    <h3>K-Means Clustering</h3>
+                    <p class="status-badge" id="kmeansStatusText">Checking...</p>
+                    <button class="btn-small" onclick="runKMeans()" id="kmeansBtn">
+                        Run Clustering
+                    </button>
+                </div>
+            </div>
+
+            <div class="ml-status-card" id="rfStatus">
+                <div class="status-icon">🎯</div>
+                <div class="status-content">
+                    <h3>Random Forest</h3>
+                    <p class="status-badge" id="rfStatusText">Checking...</p>
+                    <button class="btn-small" onclick="trainRandomForest()" id="rfBtn">
+                        Train Model
+                    </button>
+                </div>
+            </div>
+
+            <div class="ml-status-card" id="statsCard">
+                <div class="status-icon">📊</div>
+                <div class="status-content">
+                    <h3>ML Statistics</h3>
+                    <p id="mlAccuracy">Accuracy: --</p>
+                    <p id="mlFeatures">Features: --</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cluster Analysis Section -->
+        <div class="ml-section" data-animate>
+            <div class="section-header">
+                <h2>Cluster Analysis</h2>
+                <span class="cluster-count" id="clusterCount">-- clusters</span>
+            </div>
+
+            <div class="clusters-grid" id="clustersGrid">
+                <div class="loader"></div>
+            </div>
+        </div>
+
+        <!-- Cluster Visualization -->
+        <div class="charts-grid" data-animate>
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h2>Cluster Distribution</h2>
+                </div>
+                <canvas id="clusterChart"></canvas>
+            </div>
+
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h2>Risk Level Distribution</h2>
+                </div>
+                <canvas id="riskDistChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Risk Prediction Section -->
+        <div class="ml-section" data-animate>
+            <div class="section-header">
+                <h2>Risk Prediction</h2>
+            </div>
+
+            <div class="prediction-box">
+                <h3>Predict Account Risk</h3>
+                <div class="prediction-form">
+                    <input 
+                        type="text" 
+                        id="accountInput" 
+                        placeholder="Enter Account ID (e.g., ACC001)"
+                        class="prediction-input"
+                    />
+                    <button class="btn-primary" onclick="predictRisk()">
+                        Predict
+                    </button>
+                </div>
+
+                <div id="predictionResult" class="prediction-result" style="display: none;">
+                    <!-- Result will be shown here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Accounts by Cluster -->
+        <div class="table-section" data-animate>
+            <div class="section-header">
+                <h2>Accounts by Cluster</h2>
+                <select id="clusterSelect" onchange="loadClusterAccounts()" class="cluster-select">
+                    <option value="">Select Cluster</option>
+                </select>
+            </div>
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Account ID</th>
+                            <th>Cluster</th>
+                            <th>Suspicion Index</th>
+                            <th>Mean Amount</th>
+                            <th>Frequency</th>
+                            <th>Velocity</th>
+                        </tr>
+                    </thead>
+                    <tbody id="clusterAccountsBody">
+                        <tr><td colspan="6">Select a cluster to view accounts</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Training Log -->
+        <div class="ml-section" data-animate>
+            <div class="section-header">
+                <h2>Training Log</h2>
+                <button class="btn-small" onclick="clearLog()">Clear</button>
+            </div>
+            <div class="training-log" id="trainingLog">
+                <p style="color: #94a3b8;">No training logs yet. Run K-Means or Random Forest to see logs.</p>
+            </div>
+        </div>
+
+        <!-- Developer Credit -->
+        <div class="developer-credit" data-animate>
+            <p>Developed with ❤️ by</p>
+            <a href="https://siddharthkumar.tech" target="_blank" rel="noopener noreferrer" class="developer-link">
+                <span class="developer-name">Siddharth Kumar</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                    <polyline points="15 3 21 3 21 9"></polyline>
+                    <line x1="10" y1="14" x2="21" y2="3"></line>
+                </svg>
+            </a>
+        </div>
+    </div>
+
+    <script src="scripts/insights.js"></script>
+</body>
+</html>

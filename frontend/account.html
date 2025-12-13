@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Analysis - RTGS Analyzer</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="shortcut icon" href="../assets/money.png" type="image/x-icon">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="bg-animation">
+        <div class="gradient-orb orb-1"></div>
+        <div class="gradient-orb orb-2"></div>
+        <div class="gradient-orb orb-3"></div>
+    </div>
+
+    <nav class="navbar">
+        <div class="nav-content">
+            <div class="nav-brand">
+                <svg class="logo-icon" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2"/>
+                    <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2"/>
+                    <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2"/>
+                </svg>
+                <span>RTGS Risk Intelligence</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Dashboard</a></li>
+                <li><a href="chains.html">Risk Chains</a></li>
+                <li><a href="account.html" class="active">Accounts</a></li>
+                <li><a href="graph.html">Network</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header" data-animate>
+            <div>
+                <h1 class="page-title">
+                    <span class="gradient-text">Account</span> Intelligence
+                </h1>
+                <p class="page-subtitle">Deep dive into account behavior and risk indicators</p>
+            </div>
+        </div>
+
+        <div class="search-section" data-animate>
+            <div class="search-box">
+                <svg class="search-icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/>
+                    <path d="m21 21-4.35-4.35" stroke="currentColor" stroke-width="2"/>
+                </svg>
+                <input type="text" id="accountSearch" placeholder="Enter Account ID to analyze..." onkeyup="searchAccount(event)">
+                <button class="btn-search" onclick="performSearch()">Search</button>
+            </div>
+        </div>
+
+        <div id="accountDetails" style="display: none;">
+            <div class="account-overview" data-animate>
+                <div class="overview-card primary">
+                    <div class="overview-header">
+                        <h3>Account Information</h3>
+                        <span class="status-badge" id="accountStatus">Active</span>
+                    </div>
+                    <div class="overview-content">
+                        <div class="info-row">
+                            <span class="info-label">Account ID:</span>
+                            <span class="info-value" id="accountId">-</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Cluster Label:</span>
+                            <span class="info-value">
+                                <span class="cluster-badge" id="clusterLabel">-</span>
+                            </span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Suspicion Index:</span>
+                            <span class="info-value" id="suspicionIndex">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="overview-card success">
+                    <div class="overview-header">
+                        <h3>Transaction Metrics</h3>
+                    </div>
+                    <div class="overview-content">
+                        <div class="metric-grid">
+                            <div class="metric-item">
+                                <span class="metric-label">Mean Amount</span>
+                                <span class="metric-value" id="meanAmount">₹0</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-label">Frequency</span>
+                                <span class="metric-value" id="frequency">0</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-label">Total Volume</span>
+                                <span class="metric-value" id="totalVolume">₹0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="overview-card warning">
+                    <div class="overview-header">
+                        <h3>Risk Assessment</h3>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    <div class="overview-content">
+                        <div class="risk-meter" id="riskMeter">
+                            <div class="risk-score" id="riskScore">0%</div>
+                            <div class="risk-bar">
+                                <div class="risk-fill" id="riskFill"></div>
+                            </div>
+                            <div class="risk-label" id="riskLabel">Low Risk</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="charts-grid" data-animate>
+                <div class="chart-card">
+                    <h3>Transaction Pattern</h3>
+                    <canvas id="patternChart"></canvas>
+                </div>
+                <div class="chart-card">
+                    <h3>Cluster Distribution</h3>
+                    <canvas id="clusterChart"></canvas>
+                </div>
+            </div>
+
+            <div class="table-section" data-animate>
+                <div class="section-header">
+                    <h2>Associated Risk Chains</h2>
+                    <span class="chain-count" id="chainCount">0 chains</span>
+                </div>
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Chain ID</th>
+                                <th>Risk Score</th>
+                                <th>Total Value</th>
+                                <th>Hops</th>
+                                <th>Role</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="chainsTableBody">
+                            <tr><td colspan="6">No chains found</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="noResults" class="empty-state" style="display: none;" data-animate>
+            <svg width="120" height="120" viewBox="0 0 24 24" fill="none">
+                <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" opacity="0.3"/>
+                <path d="m21 21-4.35-4.35" stroke="currentColor" stroke-width="2" opacity="0.3"/>
+                <line x1="6" y1="11" x2="16" y2="11" stroke="currentColor" stroke-width="2"/>
+            </svg>
+            <h2>Account Not Found</h2>
+            <p>The account ID you searched for does not exist in our database.</p>
+        </div>
+
+        <div class="top-accounts-section" id="topAccountsSection" data-animate>
+            <h2>High-Risk Accounts</h2>
+            <div class="accounts-grid" id="accountsGrid">
+                <div class="loader"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="scripts/account.js"></script>
+</body>
+</html>

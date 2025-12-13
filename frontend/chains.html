@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Risk Chains - RTGS Analyzer</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="shortcut icon" href="../assets/leakage.png" type="image/x-icon">
+</head>
+<body>
+    <div class="bg-animation">
+        <div class="gradient-orb orb-1"></div>
+        <div class="gradient-orb orb-2"></div>
+        <div class="gradient-orb orb-3"></div>
+    </div>
+
+    <nav class="navbar">
+        <div class="nav-content">
+            <div class="nav-brand">
+                <svg class="logo-icon" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2"/>
+                    <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2"/>
+                    <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2"/>
+                </svg>
+                <span>RTGS Risk Intelligence</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Dashboard</a></li>
+                <li><a href="chains.html" class="active">Risk Chains</a></li>
+                <li><a href="account.html">Accounts</a></li>
+                <li><a href="graph.html">Network</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header" data-animate>
+            <div>
+                <h1 class="page-title">
+                    <span class="gradient-text">Risk Chains</span> Detection
+                </h1>
+                <p class="page-subtitle">Suspicious transaction patterns identified by AI</p>
+            </div>
+            <div class="header-actions">
+                <button class="btn-filter" onclick="toggleFilters()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                        <line x1="4" y1="21" x2="4" y2="14" stroke="currentColor" stroke-width="2"/>
+                        <line x1="4" y1="10" x2="4" y2="3" stroke="currentColor" stroke-width="2"/>
+                        <line x1="12" y1="21" x2="12" y2="12" stroke="currentColor" stroke-width="2"/>
+                        <line x1="12" y1="8" x2="12" y2="3" stroke="currentColor" stroke-width="2"/>
+                        <line x1="20" y1="21" x2="20" y2="16" stroke="currentColor" stroke-width="2"/>
+                        <line x1="20" y1="12" x2="20" y2="3" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                    Filters
+                </button>
+                <button class="btn-primary" onclick="exportChains()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke="currentColor" stroke-width="2"/>
+                        <polyline points="7 10 12 15 17 10" stroke="currentColor" stroke-width="2"/>
+                        <line x1="12" y1="15" x2="12" y2="3" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                    Export
+                </button>
+            </div>
+        </div>
+
+        <div class="filter-panel" id="filterPanel" style="display: none;">
+            <div class="filter-grid">
+                <div class="filter-group">
+                    <label>Risk Level</label>
+                    <select id="riskFilter" onchange="applyFilters()">
+                        <option value="all">All Levels</option>
+                        <option value="critical">Critical</option>
+                        <option value="high">High</option>
+                        <option value="medium">Medium</option>
+                        <option value="low">Low</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Min Value (₹Cr)</label>
+                    <input type="number" id="minValue" placeholder="0" onchange="applyFilters()">
+                </div>
+                <div class="filter-group">
+                    <label>Min Hops</label>
+                    <input type="number" id="minHops" placeholder="0" onchange="applyFilters()">
+                </div>
+                <div class="filter-group">
+                    <label>Sort By</label>
+                    <select id="sortBy" onchange="applyFilters()">
+                        <option value="risk">Risk Score</option>
+                        <option value="value">Total Value</option>
+                        <option value="hops">Number of Hops</option>
+                        <option value="date">Detection Date</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="chains-stats" data-animate>
+            <div class="mini-stat">
+                <span class="mini-stat-value" id="totalChainsCount">0</span>
+                <span class="mini-stat-label">Total Chains</span>
+            </div>
+            <div class="mini-stat">
+                <span class="mini-stat-value" id="criticalCount">0</span>
+                <span class="mini-stat-label">Critical</span>
+            </div>
+            <div class="mini-stat">
+                <span class="mini-stat-value" id="avgRisk">0%</span>
+                <span class="mini-stat-label">Avg Risk</span>
+            </div>
+            <div class="mini-stat">
+                <span class="mini-stat-value" id="totalChainValue">₹0Cr</span>
+                <span class="mini-stat-label">Total Value</span>
+            </div>
+        </div>
+
+        <div class="table-section" data-animate>
+            <div class="table-wrapper">
+                <table class="data-table chains-table">
+                    <thead>
+                        <tr>
+                            <th>Chain ID</th>
+                            <th>Risk Level</th>
+                            <th>Risk Score</th>
+                            <th>Total Value</th>
+                            <th>Hops</th>
+                            <th>Time Span</th>
+                            <th>Flags</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="chainsTableBody">
+                        <tr class="loading-row">
+                            <td colspan="8">
+                                <div class="loader"></div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="pagination" id="pagination"></div>
+    </div>
+
+    <script src="scripts/chains.js"></script>
+</body>
+</html>
